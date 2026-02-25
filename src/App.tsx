@@ -10,7 +10,23 @@ import { TimerDisplay } from './components/TimerDisplay';
 import { Controls } from './components/Controls';
 import { BlindList } from './components/BlindList';
 import { SettingsModal } from './components/SettingsModal';
+import { StatsDisplay } from './components/StatsDisplay';
 import { Settings, Menu } from 'lucide-react';
+import { TournamentConfig } from './types';
+
+const DEFAULT_STATS: TournamentConfig = {
+  buyIn: 100,
+  startingStack: 10000,
+  rebuyCost: 100,
+  rebuyStack: 10000,
+  addonCost: 50,
+  addonStack: 15000,
+  totalEntries: 10,
+  playersRemaining: 10,
+  rebuys: 0,
+  addons: 0,
+  payouts: "1st: 50%\n2nd: 30%\n3rd: 20%"
+};
 
 export default function App() {
   const {
@@ -31,6 +47,11 @@ export default function App() {
 
   const [showSidebar, setShowSidebar] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [tournamentStats, setTournamentStats] = useState<TournamentConfig>(DEFAULT_STATS);
+
+  const handleStatsUpdate = (updates: Partial<TournamentConfig>) => {
+    setTournamentStats(prev => ({ ...prev, ...updates }));
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white font-sans selection:bg-indigo-500/30">
@@ -53,17 +74,17 @@ export default function App() {
         </button>
       </header>
 
-      <main className="h-screen flex flex-col lg:flex-row pt-16">
+      <main className="flex-1 flex flex-col lg:flex-row pt-16 overflow-hidden lg:h-[calc(100vh-64px)]">
         {/* Main Timer Area */}
-        <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
-          <div className="w-full max-w-4xl mx-auto">
+        <div className="flex-1 flex flex-col p-4 sm:p-6 relative overflow-y-auto custom-scrollbar min-h-0">
+          <div className="w-full max-w-6xl mx-auto flex flex-col items-center py-4 sm:py-8">
             <TimerDisplay 
               timeLeft={timeLeft} 
               currentLevel={currentLevel} 
               nextLevel={nextLevel} 
             />
             
-            <div className="mt-12">
+            <div className="mt-6 sm:mt-8 w-full flex justify-center">
               <Controls 
                 isRunning={isRunning}
                 onToggle={toggleTimer}
@@ -73,6 +94,11 @@ export default function App() {
                 onAdjustTime={adjustTime}
               />
             </div>
+
+            <StatsDisplay 
+              stats={tournamentStats} 
+              onUpdate={handleStatsUpdate} 
+            />
           </div>
         </div>
 
@@ -119,6 +145,8 @@ export default function App() {
         onClose={() => setShowSettings(false)} 
         levels={levels}
         onSave={setAllLevels}
+        tournamentStats={tournamentStats}
+        onSaveStats={setTournamentStats}
       />
     </div>
   );

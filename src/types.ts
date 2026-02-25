@@ -14,3 +14,17 @@ export interface TimerState {
   isRunning: boolean;
   isPaused: boolean;
 }
+
+export interface TournamentConfig {
+  buyIn: number;
+  startingStack: number;
+  rebuyCost: number;
+  rebuyStack: number;
+  addonCost: number;
+  addonStack: number;
+  totalEntries: number;
+  playersRemaining: number;
+  rebuys: number;
+  addons: number;
+  payouts: string;
+}

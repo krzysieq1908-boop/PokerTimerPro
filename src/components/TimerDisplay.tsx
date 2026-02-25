@@ -70,32 +70,32 @@ export function TimerDisplay({ timeLeft, currentLevel, nextLevel }: TimerDisplay
           </div>
           
           {/* Timer */}
-          <div className="font-mono text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] font-bold tracking-tighter text-white tabular-nums leading-none mb-4 sm:mb-8 drop-shadow-lg">
+          <div className="font-mono text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] font-bold tracking-tighter text-white tabular-nums leading-none mb-4 sm:mb-8 drop-shadow-lg">
             {formatTime(minutes)}:{formatTime(seconds)}
           </div>
 
           {/* Blinds & Ante Info */}
           {currentLevel.isBreak ? (
-            <div className="text-4xl sm:text-5xl md:text-6xl font-serif italic text-emerald-400 animate-pulse">
+            <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif italic text-emerald-400 animate-pulse">
               Break Time
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-3 sm:gap-5 w-full px-4">
+            <div className="flex flex-col items-center gap-2 sm:gap-5 w-full px-4">
               {/* Blinds */}
-              <div className="flex items-baseline justify-center gap-2 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-zinc-100 whitespace-nowrap">
+              <div className="flex items-baseline justify-center gap-1 sm:gap-2 text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-zinc-100 whitespace-nowrap">
                 <span>{currentLevel.smallBlind.toLocaleString()}</span>
-                <span className="text-zinc-700 font-light text-3xl sm:text-4xl md:text-5xl">/</span>
+                <span className="text-zinc-700 font-light text-xl sm:text-3xl md:text-4xl lg:text-5xl">/</span>
                 <span>{currentLevel.bigBlind.toLocaleString()}</span>
               </div>
               
               {/* Ante */}
               {currentLevel.ante ? (
-                <div className="flex items-center gap-3 px-6 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20">
-                  <span className="text-indigo-400 text-sm sm:text-base font-bold tracking-wider uppercase">Ante</span>
-                  <span className="text-indigo-300 text-xl sm:text-2xl md:text-3xl font-bold tabular-nums">{currentLevel.ante.toLocaleString()}</span>
+                <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-1 sm:py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+                  <span className="text-indigo-400 text-[10px] sm:text-sm md:text-base font-bold tracking-wider uppercase">Ante</span>
+                  <span className="text-indigo-300 text-base sm:text-xl md:text-2xl lg:text-3xl font-bold tabular-nums">{currentLevel.ante.toLocaleString()}</span>
                 </div>
               ) : (
-                 <div className="h-10 sm:h-14"></div>
+                 <div className="h-8 sm:h-14"></div>
               )}
             </div>
           )}
