@@ -18,7 +18,7 @@ export function BlindList({ levels, currentLevelIndex }: BlindListProps) {
             <div 
               key={level.id}
               className={`
-                grid grid-cols-[40px_1fr_auto] gap-4 p-3 rounded-lg text-sm transition-colors
+                grid grid-cols-[40px_1fr_auto] gap-4 p-3 rounded-lg text-sm transition-colors items-center
                 ${isCurrent ? 'bg-indigo-500/20 border border-indigo-500/50 text-white' : ''}
                 ${isPast ? 'text-zinc-600' : 'text-zinc-300'}
                 ${!isCurrent && !isPast ? 'hover:bg-white/5' : ''}

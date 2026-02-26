@@ -68,21 +68,23 @@ const SortableRow: React.FC<{
       style={style} 
       className={`border-b border-white/5 transition-colors group ${isDragging ? 'bg-indigo-500/10 shadow-lg' : 'hover:bg-white/5'}`}
     >
-      <td className="py-3 pl-2 font-mono text-zinc-500 flex items-center gap-2">
-        <button 
-          {...attributes} 
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing text-zinc-600 hover:text-zinc-400 p-1 rounded hover:bg-white/5 touch-none"
-        >
-          <GripVertical size={14} />
-        </button>
-        {index + 1}
+      <td className="py-3 pl-2">
+        <div className="flex items-center gap-2 h-full min-h-[42px]">
+          <button 
+            {...attributes} 
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing text-zinc-600 hover:text-zinc-400 p-2 rounded-lg hover:bg-white/5 touch-none transition-colors"
+          >
+            <GripVertical size={18} />
+          </button>
+          <span className="font-mono text-zinc-500 font-medium w-6 text-center">{index + 1}</span>
+        </div>
       </td>
-      <td className="py-3">
+      <td className="py-3 pr-2">
         <select 
           value={level.isBreak ? 'break' : 'level'}
           onChange={(e) => handleChange(index, 'isBreak', e.target.value === 'break')}
-          className="bg-zinc-900/50 border border-white/10 rounded-lg px-2 py-1.5 text-zinc-300 text-sm focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 outline-none appearance-none cursor-pointer hover:bg-white/5 transition-colors"
+          className="w-full bg-zinc-900/50 border border-white/10 rounded-lg px-3 py-2.5 text-zinc-300 text-sm focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 outline-none appearance-none cursor-pointer hover:bg-white/5 transition-colors"
         >
           <option value="level">Level</option>
           <option value="break">Break</option>
