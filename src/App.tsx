@@ -164,9 +164,21 @@ export default function App() {
               <BlindList levels={levels} currentLevelIndex={currentLevelIndex} />
             </div>
 
-            <div className="mt-6 pt-6 border-t border-white/10 text-center text-xs text-zinc-600">
-              <p>Total Duration: {levels.reduce((acc, lvl) => acc + lvl.duration, 0)}m</p>
-              <p className="mt-1">Est. End Time: {new Date(Date.now() + levels.reduce((acc, lvl) => acc + lvl.duration, 0) * 60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+            <div className="mt-6 pt-6 border-t border-white/10 flex flex-col items-center gap-3">
+              <div className="flex items-center gap-2 text-zinc-500 text-xs uppercase tracking-widest font-medium">
+                <span>Support</span>
+              </div>
+              <a 
+                href="https://buymeacoffee.com/pokertimerpro" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-white p-3 rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer block"
+              >
+                <img src="/support-qr.png" alt="Support QR Code" className="w-32 h-32 object-contain" />
+              </a>
+              <p className="text-[10px] text-zinc-600 text-center max-w-[200px]">
+                Enjoying the app? Scan to buy me a coffee! ☕
+              </p>
             </div>
           </div>
         </div>
