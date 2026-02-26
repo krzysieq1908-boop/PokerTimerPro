@@ -1,4 +1,4 @@
-import { Users, Coins, Trophy, TrendingUp, DollarSign, UserMinus, UserPlus, RefreshCw, PlusCircle } from 'lucide-react';
+import { Users, Coins, Trophy, TrendingUp, DollarSign, UserMinus, UserPlus, RefreshCw, PlusCircle, MinusCircle } from 'lucide-react';
 import { TournamentConfig } from '../types';
 
 interface StatsDisplayProps {
@@ -143,37 +143,48 @@ export function StatsDisplay({ stats, onUpdate }: StatsDisplayProps) {
           <Coins size={18} />
           <span className="text-sm font-medium uppercase tracking-wider">Extras</span>
         </div>
-        <div className="flex gap-3">
-          <button 
-            onClick={handleRebuy}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              if (stats.rebuys > 0) onUpdate({ rebuys: stats.rebuys - 1 });
-            }}
-            className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 py-2 rounded-lg transition-colors text-sm font-medium relative group/btn"
-            title="Right-click to undo"
-          >
-            <RefreshCw size={14} />
-            Rebuy ({stats.rebuys})
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/90 text-xs px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-white/10">
-              Right-click to undo
-            </span>
-          </button>
-          <button 
-            onClick={handleAddon}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              if (stats.addons > 0) onUpdate({ addons: stats.addons - 1 });
-            }}
-            className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 py-2 rounded-lg transition-colors text-sm font-medium relative group/btn"
-            title="Right-click to undo"
-          >
-            <PlusCircle size={14} />
-            Add-on ({stats.addons})
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/90 text-xs px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-white/10">
-              Right-click to undo
-            </span>
-          </button>
+        <div className="flex flex-col gap-2">
+          {/* Rebuy Control */}
+          <div className="flex items-center justify-between bg-white/5 rounded-lg p-1">
+            <button 
+              onClick={() => stats.rebuys > 0 && onUpdate({ rebuys: stats.rebuys - 1 })}
+              className="p-2 hover:bg-white/10 rounded text-zinc-400 hover:text-white disabled:opacity-30"
+              disabled={stats.rebuys === 0}
+            >
+              <MinusCircle size={14} />
+            </button>
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <RefreshCw size={14} className="text-indigo-400" />
+              <span>Rebuy <span className="text-zinc-500">({stats.rebuys})</span></span>
+            </div>
+            <button 
+              onClick={handleRebuy}
+              className="p-2 hover:bg-white/10 rounded text-zinc-400 hover:text-white"
+            >
+              <PlusCircle size={14} />
+            </button>
+          </div>
+
+          {/* Addon Control */}
+          <div className="flex items-center justify-between bg-white/5 rounded-lg p-1">
+            <button 
+              onClick={() => stats.addons > 0 && onUpdate({ addons: stats.addons - 1 })}
+              className="p-2 hover:bg-white/10 rounded text-zinc-400 hover:text-white disabled:opacity-30"
+              disabled={stats.addons === 0}
+            >
+              <MinusCircle size={14} />
+            </button>
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Coins size={14} className="text-indigo-400" />
+              <span>Add-on <span className="text-zinc-500">({stats.addons})</span></span>
+            </div>
+            <button 
+              onClick={handleAddon}
+              className="p-2 hover:bg-white/10 rounded text-zinc-400 hover:text-white"
+            >
+              <PlusCircle size={14} />
+            </button>
+          </div>
         </div>
       </div>
 

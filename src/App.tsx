@@ -49,22 +49,33 @@ export default function App() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [tournamentStats, setTournamentStats] = useState<TournamentConfig>(DEFAULT_STATS);
-  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isNativeFullScreen, setIsNativeFullScreen] = useState(false);
+  const [isSimulatedFullScreen, setIsSimulatedFullScreen] = useState(false);
+
+  const isFullScreen = isNativeFullScreen || isSimulatedFullScreen;
 
   useEffect(() => {
     const handleFullScreenChange = () => {
-      setIsFullScreen(!!document.fullscreenElement);
+      setIsNativeFullScreen(!!document.fullscreenElement);
     };
     document.addEventListener('fullscreenchange', handleFullScreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
   }, []);
 
   const toggleFullScreen = async () => {
+    if (isSimulatedFullScreen) {
+      setIsSimulatedFullScreen(false);
+      return;
+    }
+
     if (!document.fullscreenElement) {
       try {
+        // Try native fullscreen first
         await document.documentElement.requestFullscreen();
       } catch (err) {
-        console.error("Error attempting to enable full-screen mode:", err);
+        console.log("Native fullscreen not supported, falling back to simulated mode");
+        // Fallback for iOS Safari and others
+        setIsSimulatedFullScreen(true);
       }
     } else {
       if (document.exitFullscreen) {
@@ -92,7 +103,7 @@ export default function App() {
         <div className="flex items-center gap-2">
           <button 
             onClick={toggleFullScreen}
-            className="hidden md:block p-2 hover:bg-white/10 rounded-lg transition-colors text-zinc-400 hover:text-white"
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors text-zinc-400 hover:text-white"
             title={isFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
           >
             {isFullScreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
@@ -108,11 +119,11 @@ export default function App() {
 
       <main className={`flex-1 flex flex-col lg:flex-row overflow-hidden transition-all duration-300 ${isFullScreen ? 'h-[100dvh] pt-0' : 'pt-16 lg:h-[calc(100dvh-64px)] h-[calc(100dvh-64px)]'}`}>
         {/* Main Timer Area */}
-        <div className={`flex-1 flex flex-col relative min-h-0 transition-all duration-500 ${isFullScreen ? 'p-0 overflow-hidden' : 'p-4 sm:p-6 overflow-y-auto custom-scrollbar'}`}>
-          <div className={`w-full mx-auto flex flex-col items-center h-full transition-all duration-500 ${isFullScreen ? 'justify-between py-4 max-w-[95vw]' : 'py-4 sm:py-8 max-w-6xl'}`}>
+        <div className={`flex-1 flex flex-col relative min-h-0 transition-all duration-500 ${isFullScreen ? 'p-0 overflow-y-auto custom-scrollbar' : 'p-4 sm:p-6 overflow-y-auto custom-scrollbar'}`}>
+          <div className={`w-full mx-auto flex h-full transition-all duration-500 ${isFullScreen ? 'flex-col landscape:flex-row items-center justify-between p-4 max-w-[95vw] landscape:gap-8' : 'flex-col items-center py-4 sm:py-8 max-w-6xl'}`}>
             
             {/* Timer - Flexible height in full screen */}
-            <div className={`flex items-center justify-center w-full transition-all duration-500 ${isFullScreen ? 'flex-1 min-h-0' : ''}`}>
+            <div className={`flex items-center justify-center transition-all duration-500 ${isFullScreen ? 'w-full flex-1 min-h-0 landscape:w-1/2 landscape:h-full' : 'w-full'}`}>
               <TimerDisplay 
                 timeLeft={timeLeft} 
                 currentLevel={currentLevel} 
@@ -123,7 +134,33 @@ export default function App() {
             </div>
             
             {/* Controls & Stats */}
-            <div className={`w-full flex flex-col items-center transition-all duration-500 ${isFullScreen ? 'gap-4 shrink-0 px-8 pb-4' : 'gap-8 mt-6 sm:mt-8'}`}>
+            <div className={`flex flex-col items-center transition-all duration-500 ${isFullScreen ? 'w-full gap-4 shrink-0 pb-4 landscape:w-auto landscape:h-full landscape:justify-center landscape:pb-0' : 'w-full gap-8 mt-6 sm:mt-8'}`}>
+              
+              {/* Next Level Preview - Landscape Fullscreen Only */}
+              {isFullScreen && nextLevel && (
+                <div className="hidden landscape:flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-700 mb-4">
+                  <div className="text-zinc-600 text-xs uppercase tracking-[0.2em] mb-2">Up Next</div>
+                  <div className="flex items-center gap-3 px-6 py-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md shadow-lg">
+                    {nextLevel.isBreak ? (
+                      <span className="text-indigo-400 font-medium tracking-wide">Break ({nextLevel.duration}m)</span>
+                    ) : (
+                      <>
+                        <div className="flex items-baseline gap-2 text-zinc-300 font-mono text-xl">
+                           <span>{nextLevel.smallBlind.toLocaleString()}</span>
+                           <span className="text-zinc-600">/</span>
+                           <span>{nextLevel.bigBlind.toLocaleString()}</span>
+                        </div>
+                        {nextLevel.ante && (
+                           <div className="pl-3 border-l border-white/10 text-zinc-500 text-sm font-mono">
+                             ({nextLevel.ante})
+                           </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <Controls 
                 isRunning={isRunning}
                 onToggle={toggleTimer}
@@ -133,7 +170,7 @@ export default function App() {
                 onAdjustTime={adjustTime}
               />
 
-              <div className={`w-full transition-all duration-500 ${isFullScreen ? 'scale-90 origin-bottom' : ''}`}>
+              <div className={`w-full transition-all duration-500 ${isFullScreen ? 'hidden' : ''}`}>
                 <StatsDisplay 
                   stats={tournamentStats} 
                   onUpdate={handleStatsUpdate} 
