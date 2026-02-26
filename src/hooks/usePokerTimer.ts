@@ -154,6 +154,10 @@ export function usePokerTimer(initialLevels: BlindLevel[]) {
     setTimeLeft((prev) => Math.max(0, prev + seconds));
   };
 
+  const setTime = (seconds: number) => {
+    setTimeLeft(Math.max(0, seconds));
+  };
+
   const updateLevel = (index: number, newLevel: BlindLevel) => {
     setLevels((prev) => {
       const newLevels = [...prev];
@@ -186,6 +190,7 @@ export function usePokerTimer(initialLevels: BlindLevel[]) {
     skipLevel,
     prevLevel,
     adjustTime,
+    setTime,
     updateLevel,
     setAllLevels,
     isLevelChangeAnimating

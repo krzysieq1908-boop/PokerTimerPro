@@ -41,6 +41,7 @@ export default function App() {
     skipLevel,
     prevLevel,
     adjustTime,
+    setTime,
     setAllLevels,
     isLevelChangeAnimating
   } = usePokerTimer(DEFAULT_LEVELS);
@@ -118,6 +119,7 @@ export default function App() {
                 currentLevel={currentLevel} 
                 nextLevel={nextLevel} 
                 isFullScreen={isFullScreen}
+                onTimeChange={setTime}
               />
             </div>
             
