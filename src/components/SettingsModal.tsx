@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { BlindLevel, TournamentConfig } from '../types';
 import { DEFAULT_LEVELS } from '../constants';
 import { parseStructureFromFile } from '../services/gemini';
+import { ModernNumberInput } from './ModernNumberInput';
 import {
   DndContext,
   closestCenter,
@@ -81,7 +82,7 @@ const SortableRow: React.FC<{
         <select 
           value={level.isBreak ? 'break' : 'level'}
           onChange={(e) => handleChange(index, 'isBreak', e.target.value === 'break')}
-          className="bg-transparent border border-white/10 rounded px-2 py-1 text-zinc-300 focus:border-indigo-500 outline-none"
+          className="bg-zinc-900/50 border border-white/10 rounded-lg px-2 py-1.5 text-zinc-300 text-sm focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 outline-none appearance-none cursor-pointer hover:bg-white/5 transition-colors"
         >
           <option value="level">Level</option>
           <option value="break">Break</option>
@@ -89,40 +90,40 @@ const SortableRow: React.FC<{
       </td>
       <td className="py-3">
         {!level.isBreak && (
-          <input 
-            type="number" 
+          <ModernNumberInput 
             value={level.smallBlind}
-            onChange={(e) => handleChange(index, 'smallBlind', parseInt(e.target.value) || 0)}
-            className="w-20 bg-transparent border border-white/10 rounded px-2 py-1 text-zinc-300 focus:border-indigo-500 outline-none"
+            onChange={(val) => handleChange(index, 'smallBlind', val)}
+            className="w-28"
+            min={0}
           />
         )}
       </td>
       <td className="py-3">
         {!level.isBreak && (
-          <input 
-            type="number" 
+          <ModernNumberInput 
             value={level.bigBlind}
-            onChange={(e) => handleChange(index, 'bigBlind', parseInt(e.target.value) || 0)}
-            className="w-20 bg-transparent border border-white/10 rounded px-2 py-1 text-zinc-300 focus:border-indigo-500 outline-none"
+            onChange={(val) => handleChange(index, 'bigBlind', val)}
+            className="w-28"
+            min={0}
           />
         )}
       </td>
       <td className="py-3">
         {!level.isBreak && (
-          <input 
-            type="number" 
+          <ModernNumberInput 
             value={level.ante || 0}
-            onChange={(e) => handleChange(index, 'ante', parseInt(e.target.value) || 0)}
-            className="w-16 bg-transparent border border-white/10 rounded px-2 py-1 text-zinc-300 focus:border-indigo-500 outline-none"
+            onChange={(val) => handleChange(index, 'ante', val)}
+            className="w-24"
+            min={0}
           />
         )}
       </td>
       <td className="py-3">
-        <input 
-          type="number" 
+        <ModernNumberInput 
           value={level.duration}
-          onChange={(e) => handleChange(index, 'duration', parseInt(e.target.value) || 1)}
-          className="w-16 bg-transparent border border-white/10 rounded px-2 py-1 text-zinc-300 focus:border-indigo-500 outline-none"
+          onChange={(val) => handleChange(index, 'duration', val)}
+          className="w-24"
+          min={1}
         />
       </td>
       <td className="py-3 text-right pr-2">
@@ -428,7 +429,7 @@ export function SettingsModal({ isOpen, onClose, levels: initialLevels, onSave, 
               <div className="mt-4 flex items-center justify-between">
                 <button 
                   onClick={addLevel}
-                  className="flex items-center gap-2 text-indigo-400 hover:text-indigo-300 text-sm font-medium px-2 py-1 rounded hover:bg-indigo-500/10 transition-colors"
+                  className="flex items-center gap-2 text-indigo-400 hover:text-white text-sm font-medium px-4 py-2 rounded-lg bg-indigo-500/10 hover:bg-indigo-500 transition-all active:scale-95"
                 >
                   <Plus size={16} />
                   Add Level
@@ -445,15 +446,15 @@ export function SettingsModal({ isOpen, onClose, levels: initialLevels, onSave, 
                   <button 
                     onClick={handleImportClick}
                     disabled={isImporting}
-                    className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm font-medium px-2 py-1 rounded hover:bg-white/5 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 text-zinc-400 hover:text-white text-sm font-medium px-3 py-2 rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50"
                   >
                     <Upload size={16} />
-                    Import (JSON or AI)
+                    Import
                   </button>
                   
                   <button 
                     onClick={handleResetDefaults}
-                    className="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 text-sm font-medium px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                    className="flex items-center gap-2 text-zinc-500 hover:text-red-400 text-sm font-medium px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
                   >
                     <RotateCcw size={16} />
                     Reset
@@ -465,104 +466,82 @@ export function SettingsModal({ isOpen, onClose, levels: initialLevels, onSave, 
 
           {activeTab === 'tournament' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="text-zinc-400 text-xs uppercase tracking-wider font-medium">Buy-in & Chips</h3>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
+                    <SettingsIcon size={20} />
+                  </div>
+                  <h3 className="text-zinc-200 font-medium tracking-wide">Buy-in & Chips</h3>
+                </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Buy-in ($)</label>
-                    <input 
-                      type="number" 
-                      value={editedStats.buyIn}
-                      onChange={(e) => setEditedStats({...editedStats, buyIn: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:border-indigo-500 outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Starting Chips</label>
-                    <input 
-                      type="number" 
-                      value={editedStats.startingStack}
-                      onChange={(e) => setEditedStats({...editedStats, startingStack: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:border-indigo-500 outline-none"
-                    />
-                  </div>
+                  <ModernNumberInput 
+                    label="Buy-in ($)"
+                    value={editedStats.buyIn}
+                    onChange={(val) => setEditedStats({...editedStats, buyIn: val})}
+                  />
+                  <ModernNumberInput 
+                    label="Starting Chips"
+                    value={editedStats.startingStack}
+                    onChange={(val) => setEditedStats({...editedStats, startingStack: val})}
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Rebuy Cost ($)</label>
-                    <input 
-                      type="number" 
-                      value={editedStats.rebuyCost}
-                      onChange={(e) => setEditedStats({...editedStats, rebuyCost: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:border-indigo-500 outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Rebuy Chips</label>
-                    <input 
-                      type="number" 
-                      value={editedStats.rebuyStack}
-                      onChange={(e) => setEditedStats({...editedStats, rebuyStack: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:border-indigo-500 outline-none"
-                    />
-                  </div>
+                  <ModernNumberInput 
+                    label="Rebuy Cost ($)"
+                    value={editedStats.rebuyCost}
+                    onChange={(val) => setEditedStats({...editedStats, rebuyCost: val})}
+                  />
+                  <ModernNumberInput 
+                    label="Rebuy Chips"
+                    value={editedStats.rebuyStack}
+                    onChange={(val) => setEditedStats({...editedStats, rebuyStack: val})}
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Add-on Cost ($)</label>
-                    <input 
-                      type="number" 
-                      value={editedStats.addonCost}
-                      onChange={(e) => setEditedStats({...editedStats, addonCost: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:border-indigo-500 outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Add-on Chips</label>
-                    <input 
-                      type="number" 
-                      value={editedStats.addonStack}
-                      onChange={(e) => setEditedStats({...editedStats, addonStack: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:border-indigo-500 outline-none"
-                    />
-                  </div>
+                  <ModernNumberInput 
+                    label="Add-on Cost ($)"
+                    value={editedStats.addonCost}
+                    onChange={(val) => setEditedStats({...editedStats, addonCost: val})}
+                  />
+                  <ModernNumberInput 
+                    label="Add-on Chips"
+                    value={editedStats.addonStack}
+                    onChange={(val) => setEditedStats({...editedStats, addonStack: val})}
+                  />
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <h3 className="text-zinc-400 text-xs uppercase tracking-wider font-medium">Current Status</h3>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
+                    <Trophy size={20} />
+                  </div>
+                  <h3 className="text-zinc-200 font-medium tracking-wide">Current Status</h3>
+                </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Total Entries</label>
-                    <input 
-                      type="number" 
-                      value={editedStats.totalEntries}
-                      onChange={(e) => setEditedStats({...editedStats, totalEntries: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:border-indigo-500 outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-zinc-400 mb-1">Players Remaining</label>
-                    <input 
-                      type="number" 
-                      value={editedStats.playersRemaining}
-                      onChange={(e) => setEditedStats({...editedStats, playersRemaining: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:border-indigo-500 outline-none"
-                    />
-                  </div>
+                  <ModernNumberInput 
+                    label="Total Entries"
+                    value={editedStats.totalEntries}
+                    onChange={(val) => setEditedStats({...editedStats, totalEntries: val})}
+                  />
+                  <ModernNumberInput 
+                    label="Players Remaining"
+                    value={editedStats.playersRemaining}
+                    onChange={(val) => setEditedStats({...editedStats, playersRemaining: val})}
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-zinc-400 mb-1">Payout Structure (Text)</label>
+                  <label className="block text-xs text-zinc-500 uppercase tracking-wider font-medium mb-1.5">Payout Structure (Text)</label>
                   <textarea 
                     value={editedStats.payouts}
                     onChange={(e) => setEditedStats({...editedStats, payouts: e.target.value})}
                     placeholder="e.g. 1:70%, 2:30%"
-                    className="w-full h-32 bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:border-indigo-500 outline-none resize-none"
+                    className="w-full h-32 bg-zinc-900/50 border border-white/10 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-indigo-500/50 focus:bg-zinc-900 focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none transition-all"
                   />
                 </div>
               </div>
@@ -574,13 +553,13 @@ export function SettingsModal({ isOpen, onClose, levels: initialLevels, onSave, 
         <div className="p-6 border-t border-white/10 flex justify-end gap-3">
           <button 
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+            className="px-6 py-2.5 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-colors font-medium"
           >
             Cancel
           </button>
           <button 
             onClick={handleSave}
-            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium flex items-center gap-2 transition-colors"
+            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
           >
             <Save size={18} />
             Save Changes
