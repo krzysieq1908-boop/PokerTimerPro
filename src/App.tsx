@@ -25,7 +25,7 @@ const DEFAULT_STATS: TournamentConfig = {
   playersRemaining: 10,
   rebuys: 0,
   addons: 0,
-  payouts: "1st: 50%\n2nd: 30%\n3rd: 20%"
+  payouts: "1:50%\n2:30%\n3:20%"
 };
 
 export default function App() {

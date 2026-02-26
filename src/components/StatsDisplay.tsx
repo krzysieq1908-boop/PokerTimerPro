@@ -45,6 +45,23 @@ export function StatsDisplay({ stats, onUpdate }: StatsDisplayProps) {
     onUpdate({ addons: stats.addons + 1 });
   };
 
+  // Parse payouts
+  const payoutStructure = (stats.payouts || "").split('\n')
+    .map(line => {
+      const parts = line.split(':');
+      if (parts.length < 2) return null;
+      const place = parts[0].trim();
+      const percentageStr = parts[1].trim().replace('%', '');
+      const percentage = parseFloat(percentageStr);
+      if (isNaN(percentage)) return null;
+      return {
+        place,
+        amount: Math.floor(prizePool * (percentage / 100)),
+        percent: percentage
+      };
+    })
+    .filter((item): item is { place: string; amount: number; percent: number } => item !== null);
+
   return (
     <div className="w-full max-w-6xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       
@@ -93,16 +110,30 @@ export function StatsDisplay({ stats, onUpdate }: StatsDisplayProps) {
       </div>
 
       {/* Prize Pool Card */}
-      <div className="bg-[#111] border border-white/10 rounded-xl p-4 flex flex-col justify-between group hover:border-indigo-500/30 transition-colors">
+      <div className="bg-[#111] border border-white/10 rounded-xl p-4 flex flex-col group hover:border-indigo-500/30 transition-colors relative overflow-hidden">
         <div className="flex items-center gap-2 text-zinc-400 mb-2">
           <Trophy size={18} />
           <span className="text-sm font-medium uppercase tracking-wider">Prize Pool</span>
         </div>
-        <div className="text-3xl font-bold text-emerald-400 tabular-nums">
+        <div className="text-3xl font-bold text-emerald-400 tabular-nums mb-2">
           ${prizePool.toLocaleString()}
         </div>
-        <div className="text-xs text-zinc-600 mt-1 truncate">
-          {stats.payouts || "Winner takes all"}
+        
+        <div className="flex-1 overflow-y-auto custom-scrollbar -mr-2 pr-2 max-h-[80px]">
+          {payoutStructure.length > 0 ? (
+            <div className="flex flex-col gap-1">
+              {payoutStructure.map((payout, i) => (
+                <div key={i} className="flex justify-between items-center text-sm border-b border-white/5 last:border-0 pb-1 last:pb-0">
+                  <span className="text-zinc-500 font-mono text-xs">{payout.place}</span>
+                  <span className="text-zinc-300 font-medium tabular-nums">${payout.amount.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-xs text-zinc-600 italic">
+              {stats.payouts || "Winner takes all"}
+            </div>
+          )}
         </div>
       </div>
 

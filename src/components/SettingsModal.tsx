@@ -561,7 +561,7 @@ export function SettingsModal({ isOpen, onClose, levels: initialLevels, onSave, 
                   <textarea 
                     value={editedStats.payouts}
                     onChange={(e) => setEditedStats({...editedStats, payouts: e.target.value})}
-                    placeholder="e.g. 1st: 50%, 2nd: 30%, 3rd: 20%"
+                    placeholder="e.g. 1:70%, 2:30%"
                     className="w-full h-32 bg-white/5 border border-white/10 rounded px-3 py-2 text-white focus:border-indigo-500 outline-none resize-none"
                   />
                 </div>
