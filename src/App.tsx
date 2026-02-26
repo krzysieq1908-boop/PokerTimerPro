@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePokerTimer } from './hooks/usePokerTimer';
 import { DEFAULT_LEVELS } from './constants';
 import { TimerDisplay } from './components/TimerDisplay';
@@ -11,7 +11,7 @@ import { Controls } from './components/Controls';
 import { BlindList } from './components/BlindList';
 import { SettingsModal } from './components/SettingsModal';
 import { StatsDisplay } from './components/StatsDisplay';
-import { Settings, Menu } from 'lucide-react';
+import { Settings, Menu, Maximize2, Minimize2 } from 'lucide-react';
 import { TournamentConfig } from './types';
 
 const DEFAULT_STATS: TournamentConfig = {
@@ -48,6 +48,29 @@ export default function App() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [tournamentStats, setTournamentStats] = useState<TournamentConfig>(DEFAULT_STATS);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  }, []);
+
+  const toggleFullScreen = async () => {
+    if (!document.fullscreenElement) {
+      try {
+        await document.documentElement.requestFullscreen();
+      } catch (err) {
+        console.error("Error attempting to enable full-screen mode:", err);
+      }
+    } else {
+      if (document.exitFullscreen) {
+        await document.exitFullscreen();
+      }
+    }
+  };
 
   const handleStatsUpdate = (updates: Partial<TournamentConfig>) => {
     setTournamentStats(prev => ({ ...prev, ...updates }));
@@ -61,30 +84,40 @@ export default function App() {
       )}
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-50">
+      <header className={`fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-50 transition-opacity duration-300 ${isFullScreen && !showSidebar ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-lg">P</div>
           <h1 className="font-bold text-xl tracking-tight hidden sm:block">PokerTimer<span className="text-indigo-500">Pro</span></h1>
         </div>
-        <button 
-          onClick={() => setShowSidebar(!showSidebar)}
-          className="p-2 hover:bg-white/10 rounded-lg transition-colors lg:hidden"
-        >
-          <Menu />
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={toggleFullScreen}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors text-zinc-400 hover:text-white"
+            title={isFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
+          >
+            {isFullScreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+          </button>
+          <button 
+            onClick={() => setShowSidebar(!showSidebar)}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors lg:hidden"
+          >
+            <Menu />
+          </button>
+        </div>
       </header>
 
       <main className="flex-1 flex flex-col lg:flex-row pt-16 overflow-hidden lg:h-[calc(100vh-64px)]">
         {/* Main Timer Area */}
-        <div className="flex-1 flex flex-col p-4 sm:p-6 relative overflow-y-auto custom-scrollbar min-h-0">
-          <div className="w-full max-w-6xl mx-auto flex flex-col items-center py-4 sm:py-8">
+        <div className={`flex-1 flex flex-col p-4 sm:p-6 relative overflow-y-auto custom-scrollbar min-h-0 transition-all duration-500 ${isFullScreen ? 'justify-center' : ''}`}>
+          <div className={`w-full mx-auto flex flex-col items-center py-4 sm:py-8 transition-all duration-500 ${isFullScreen ? 'max-w-[90vw] scale-110' : 'max-w-6xl'}`}>
             <TimerDisplay 
               timeLeft={timeLeft} 
               currentLevel={currentLevel} 
               nextLevel={nextLevel} 
+              isFullScreen={isFullScreen}
             />
             
-            <div className="mt-6 sm:mt-8 w-full flex justify-center">
+            <div className={`w-full flex justify-center transition-all duration-500 ${isFullScreen ? 'mt-12 opacity-0 hover:opacity-100' : 'mt-6 sm:mt-8'}`}>
               <Controls 
                 isRunning={isRunning}
                 onToggle={toggleTimer}
@@ -95,10 +128,12 @@ export default function App() {
               />
             </div>
 
-            <StatsDisplay 
-              stats={tournamentStats} 
-              onUpdate={handleStatsUpdate} 
-            />
+            <div className={`transition-all duration-500 ${isFullScreen ? 'mt-12 scale-110' : ''}`}>
+              <StatsDisplay 
+                stats={tournamentStats} 
+                onUpdate={handleStatsUpdate} 
+              />
+            </div>
           </div>
         </div>
 
