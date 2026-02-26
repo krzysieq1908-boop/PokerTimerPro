@@ -92,7 +92,7 @@ export default function App() {
         <div className="flex items-center gap-2">
           <button 
             onClick={toggleFullScreen}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors text-zinc-400 hover:text-white"
+            className="hidden md:block p-2 hover:bg-white/10 rounded-lg transition-colors text-zinc-400 hover:text-white"
             title={isFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
           >
             {isFullScreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
