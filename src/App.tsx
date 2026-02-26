@@ -11,7 +11,7 @@ import { Controls } from './components/Controls';
 import { BlindList } from './components/BlindList';
 import { SettingsModal } from './components/SettingsModal';
 import { StatsDisplay } from './components/StatsDisplay';
-import { Settings, Menu, Maximize2, Minimize2 } from 'lucide-react';
+import { Settings, Menu, Maximize2, Minimize2, Coffee } from 'lucide-react';
 import { TournamentConfig } from './types';
 
 const DEFAULT_STATS: TournamentConfig = {
@@ -172,12 +172,13 @@ export default function App() {
                 href="https://buymeacoffee.com/pokertimerpro" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="bg-white p-3 rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer block"
+                className="group p-4 bg-white rounded-full shadow-lg hover:scale-110 transition-transform duration-300"
+                title="Buy me a coffee"
               >
-                <img src="/support-qr.png" alt="Support QR Code" className="w-32 h-32 object-contain" />
+                <Coffee className="text-black" size={32} strokeWidth={2.5} />
               </a>
               <p className="text-[10px] text-zinc-600 text-center max-w-[200px]">
-                Enjoying the app? Scan to buy me a coffee! ☕
+                Enjoying the app? Buy me a coffee! ☕
               </p>
             </div>
           </div>
