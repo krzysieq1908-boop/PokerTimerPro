@@ -222,11 +222,10 @@ export function TimerDisplay({ timeLeft, currentLevel, nextLevel, isFullScreen =
   }, [isDragging, safeTotalDuration, onTimeChange]);
 
   // Handle position calculation
-  // Angle for handle: starts at -PI/2 (top). 
-  // We want it at the end of the progress bar.
-  // Progress bar length is determined by progressPct.
-  // Angle = -PI/2 + (progressPct * 2 * PI)
-  const handleAngle = -Math.PI / 2 + (progressPct * 2 * Math.PI);
+  // We want the handle to follow the CCW progress.
+  // Top (-PI/2) -> Left (-PI) -> Bottom (-3PI/2) -> Right (-2PI)
+  // Formula derived from handleInteraction: atan2 = - (pct * 2PI) - PI/2
+  const handleAngle = - (progressPct * 2 * Math.PI) - Math.PI / 2;
   const handleX = 160 + radius * Math.cos(handleAngle);
   const handleY = 160 + radius * Math.sin(handleAngle);
 
@@ -255,11 +254,8 @@ export function TimerDisplay({ timeLeft, currentLevel, nextLevel, isFullScreen =
         <div className="absolute inset-0 flex items-center justify-center">
           <svg 
             ref={svgRef}
-            className={`w-full h-full transform drop-shadow-2xl ${onTimeChange ? 'cursor-pointer' : ''}`}
+            className="w-full h-full transform drop-shadow-2xl"
             viewBox="0 0 320 320"
-            onMouseDown={handleMouseDown}
-            onTouchStart={handleTouchStart}
-            style={{ touchAction: 'none' }}
           >
             {/* Track */}
             <circle
@@ -287,6 +283,34 @@ export function TimerDisplay({ timeLeft, currentLevel, nextLevel, isFullScreen =
               filter="url(#glow)"
               className={`transition-all duration-100 ease-linear ${isDragging ? 'opacity-90' : 'opacity-100'}`}
             />
+
+            {/* Interactive Handle */}
+            {onTimeChange && (
+              <g 
+                className="cursor-grab active:cursor-grabbing"
+                onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
+                style={{ touchAction: 'none' }} // Prevent scrolling only when touching the handle
+              >
+                {/* Invisible larger hit area */}
+                <circle
+                  cx={handleX}
+                  cy={handleY}
+                  r="30"
+                  fill="transparent"
+                />
+                {/* Visible Handle */}
+                <circle
+                  cx={handleX}
+                  cy={handleY}
+                  r="10"
+                  fill="#ffffff"
+                  stroke={isWarning ? '#ef4444' : '#a855f7'}
+                  strokeWidth="3"
+                  className="shadow-lg drop-shadow-lg"
+                />
+              </g>
+            )}
           </svg>
         </div>
 
