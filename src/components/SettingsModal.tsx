@@ -88,41 +88,41 @@ const SortableRow: React.FC<{
           <option value="break">Break</option>
         </select>
       </td>
-      <td className="py-3">
+      <td className="py-3 pr-2">
         {!level.isBreak && (
           <ModernNumberInput 
             value={level.smallBlind}
             onChange={(val) => handleChange(index, 'smallBlind', val)}
-            className="w-28"
+            className="w-full min-w-[80px]"
             min={0}
           />
         )}
       </td>
-      <td className="py-3">
+      <td className="py-3 pr-2">
         {!level.isBreak && (
           <ModernNumberInput 
             value={level.bigBlind}
             onChange={(val) => handleChange(index, 'bigBlind', val)}
-            className="w-28"
+            className="w-full min-w-[80px]"
             min={0}
           />
         )}
       </td>
-      <td className="py-3">
+      <td className="py-3 pr-2">
         {!level.isBreak && (
           <ModernNumberInput 
             value={level.ante || 0}
             onChange={(val) => handleChange(index, 'ante', val)}
-            className="w-24"
+            className="w-full min-w-[60px]"
             min={0}
           />
         )}
       </td>
-      <td className="py-3">
+      <td className="py-3 pr-2">
         <ModernNumberInput 
           value={level.duration}
           onChange={(val) => handleChange(index, 'duration', val)}
-          className="w-24"
+          className="w-full min-w-[60px]"
           min={1}
         />
       </td>
@@ -393,16 +393,16 @@ export function SettingsModal({ isOpen, onClose, levels: initialLevels, onSave, 
                   onDragEnd={handleDragEnd}
                   modifiers={[restrictToVerticalAxis]}
                 >
-                  <table className="w-full text-left border-collapse min-w-[600px]">
+                  <table className="w-full text-left border-collapse min-w-[600px] md:min-w-0">
                     <thead>
                       <tr className="text-zinc-500 text-xs uppercase tracking-wider border-b border-white/10">
-                        <th className="pb-3 pl-2">#</th>
-                        <th className="pb-3">Type</th>
+                        <th className="pb-3 pl-2 w-12">#</th>
+                        <th className="pb-3 w-24">Type</th>
                         <th className="pb-3">Small</th>
                         <th className="pb-3">Big</th>
                         <th className="pb-3">Ante</th>
                         <th className="pb-3">Min</th>
-                        <th className="pb-3"></th>
+                        <th className="pb-3 w-16"></th>
                       </tr>
                     </thead>
                     <tbody className="text-sm">

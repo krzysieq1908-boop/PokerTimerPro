@@ -107,7 +107,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className={`flex-1 flex flex-col lg:flex-row overflow-hidden transition-all duration-300 ${isFullScreen ? 'h-screen pt-0' : 'pt-16 lg:h-[calc(100vh-64px)]'}`}>
+      <main className={`flex-1 flex flex-col lg:flex-row overflow-hidden transition-all duration-300 ${isFullScreen ? 'h-[100dvh] pt-0' : 'pt-16 lg:h-[calc(100dvh-64px)] h-[calc(100dvh-64px)]'}`}>
         {/* Main Timer Area */}
         <div className={`flex-1 flex flex-col relative min-h-0 transition-all duration-500 ${isFullScreen ? 'p-0 overflow-hidden' : 'p-4 sm:p-6 overflow-y-auto custom-scrollbar'}`}>
           <div className={`w-full mx-auto flex flex-col items-center h-full transition-all duration-500 ${isFullScreen ? 'justify-between py-4 max-w-[95vw]' : 'py-4 sm:py-8 max-w-6xl'}`}>
