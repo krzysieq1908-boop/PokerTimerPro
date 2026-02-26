@@ -87,8 +87,7 @@ export default function App() {
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-50 transition-opacity duration-300 ${isFullScreen && !showSidebar ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-lg">P</div>
-          <h1 className="font-bold text-xl tracking-tight hidden sm:block">PokerTimer<span className="text-indigo-500">Pro</span></h1>
+          <h1 className="font-bold text-xl tracking-tight">PokerTimer<span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Pro</span></h1>
         </div>
         <div className="flex items-center gap-2">
           <button 
