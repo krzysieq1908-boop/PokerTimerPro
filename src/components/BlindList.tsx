@@ -27,7 +27,7 @@ export function BlindList({ levels, currentLevelIndex }: BlindListProps) {
               <div className="font-mono opacity-50">{index + 1}</div>
               <div className="font-medium">
                 {level.isBreak ? (
-                  <span className="text-emerald-400">BREAK</span>
+                  <span className="text-indigo-400">BREAK</span>
                 ) : (
                   <span>{level.smallBlind.toLocaleString()} / {level.bigBlind.toLocaleString()} {level.ante ? `(${level.ante})` : ''}</span>
                 )}

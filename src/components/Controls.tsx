@@ -1,4 +1,4 @@
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, Plus, Minus } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, Plus, Minus, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ControlsProps {
   isRunning: boolean;
@@ -11,46 +11,102 @@ interface ControlsProps {
 
 export function Controls({ isRunning, onToggle, onReset, onNext, onPrev, onAdjustTime }: ControlsProps) {
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="flex items-center gap-4">
+    <div className="flex flex-col items-center gap-8 w-full max-w-md mx-auto">
+      
+      {/* Main Controls Row */}
+      <div className="flex items-center justify-center gap-6 sm:gap-8 w-full">
+        
+        {/* Previous Level */}
         <button 
           onClick={onPrev}
-          className="p-4 rounded-full bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+          className="group relative p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 transition-all duration-300 active:scale-95"
           title="Previous Level"
         >
-          <SkipBack size={24} />
+          <div className="absolute inset-0 bg-indigo-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <SkipBack size={24} className="relative z-10 text-zinc-400 group-hover:text-white transition-colors" />
         </button>
         
+        {/* Play / Pause - The Centerpiece */}
         <button 
           onClick={onToggle}
           className={`
-            w-24 h-24 rounded-full flex items-center justify-center transition-all transform hover:scale-105 active:scale-95
+            relative group w-24 h-24 sm:w-28 sm:h-28 rounded-[2rem] flex items-center justify-center transition-all duration-500 transform hover:scale-105 active:scale-95
             ${isRunning 
-              ? 'bg-amber-500/20 text-amber-500 border-2 border-amber-500/50 shadow-[0_0_30px_rgba(245,158,11,0.2)]' 
-              : 'bg-emerald-500 text-white shadow-[0_0_30px_rgba(16,185,129,0.4)]'
+              ? 'bg-[#1a1a1a] border border-white/10 shadow-[inset_0_2px_20px_rgba(0,0,0,0.5)]' 
+              : 'bg-gradient-to-br from-indigo-500 to-purple-600 shadow-[0_10px_40px_-10px_rgba(99,102,241,0.5)]'
             }
           `}
         >
-          {isRunning ? <Pause size={40} fill="currentColor" /> : <Play size={40} fill="currentColor" className="ml-2" />}
+          {/* Glow effect behind */}
+          {!isRunning && (
+            <div className="absolute inset-0 rounded-[2rem] bg-indigo-500 blur-2xl opacity-40 animate-pulse" />
+          )}
+          
+          {/* Icon */}
+          <div className="relative z-10">
+            {isRunning ? (
+              <Pause size={40} className="text-zinc-400 group-hover:text-white transition-colors" fill="currentColor" />
+            ) : (
+              <Play size={44} className="text-white ml-2" fill="currentColor" />
+            )}
+          </div>
         </button>
 
+        {/* Next Level */}
         <button 
           onClick={onNext}
-          className="p-4 rounded-full bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+          className="group relative p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 transition-all duration-300 active:scale-95"
           title="Next Level"
         >
-          <SkipForward size={24} />
+          <div className="absolute inset-0 bg-indigo-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <SkipForward size={24} className="relative z-10 text-zinc-400 group-hover:text-white transition-colors" />
         </button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <button onClick={() => onAdjustTime(-60)} className="px-3 py-1 rounded bg-zinc-800 text-zinc-400 hover:text-white text-xs font-mono">-1m</button>
-        <button onClick={() => onAdjustTime(-10)} className="px-3 py-1 rounded bg-zinc-800 text-zinc-400 hover:text-white text-xs font-mono">-10s</button>
-        <button onClick={onReset} className="p-2 rounded-full text-zinc-500 hover:text-red-400 transition-colors" title="Reset Timer">
-          <RotateCcw size={20} />
+      {/* Secondary Controls (Time Adjust & Reset) */}
+      <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm">
+        
+        <div className="flex items-center gap-1">
+          <button 
+            onClick={() => onAdjustTime(-60)} 
+            className="px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-zinc-500 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            -1m
+          </button>
+          <button 
+            onClick={() => onAdjustTime(-10)} 
+            className="px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-zinc-500 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            -10s
+          </button>
+        </div>
+
+        <div className="w-px h-4 bg-white/10 mx-1" />
+
+        <button 
+          onClick={onReset} 
+          className="p-2 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-400/10 transition-all active:rotate-[-180deg] duration-500" 
+          title="Reset Timer"
+        >
+          <RotateCcw size={18} />
         </button>
-        <button onClick={() => onAdjustTime(10)} className="px-3 py-1 rounded bg-zinc-800 text-zinc-400 hover:text-white text-xs font-mono">+10s</button>
-        <button onClick={() => onAdjustTime(60)} className="px-3 py-1 rounded bg-zinc-800 text-zinc-400 hover:text-white text-xs font-mono">+1m</button>
+
+        <div className="w-px h-4 bg-white/10 mx-1" />
+
+        <div className="flex items-center gap-1">
+          <button 
+            onClick={() => onAdjustTime(10)} 
+            className="px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-zinc-500 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            +10s
+          </button>
+          <button 
+            onClick={() => onAdjustTime(60)} 
+            className="px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-zinc-500 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            +1m
+          </button>
+        </div>
       </div>
     </div>
   );

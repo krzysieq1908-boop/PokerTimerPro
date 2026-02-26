@@ -305,7 +305,7 @@ export function TimerDisplay({ timeLeft, currentLevel, nextLevel, isFullScreen =
 
           {/* Blinds & Ante Info */}
           {currentLevel.isBreak ? (
-            <div className={`font-serif italic text-emerald-400 animate-pulse transition-all duration-500 ${isFullScreen ? 'text-[6vh] sm:text-[8vh]' : 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl'}`}>
+            <div className={`font-serif italic text-indigo-400 animate-pulse transition-all duration-500 ${isFullScreen ? 'text-[6vh] sm:text-[8vh]' : 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl'}`}>
               Break Time
             </div>
           ) : (
@@ -337,7 +337,7 @@ export function TimerDisplay({ timeLeft, currentLevel, nextLevel, isFullScreen =
            <div className="text-zinc-600 text-xs sm:text-sm uppercase tracking-[0.2em] mb-3">Up Next</div>
            <div className="flex items-center gap-4 px-8 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md shadow-lg">
              {nextLevel.isBreak ? (
-               <span className="text-emerald-400 font-medium tracking-wide text-lg">Break ({nextLevel.duration}m)</span>
+               <span className="text-indigo-400 font-medium tracking-wide text-lg">Break ({nextLevel.duration}m)</span>
              ) : (
                <>
                  <div className="flex items-baseline gap-2 text-zinc-300 font-mono text-xl sm:text-2xl">

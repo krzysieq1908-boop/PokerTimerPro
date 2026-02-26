@@ -75,7 +75,7 @@ export function StatsDisplay({ stats, onUpdate }: StatsDisplayProps) {
           <div className="flex gap-1">
              <button 
               onClick={() => onUpdate({ playersRemaining: stats.playersRemaining + 1, totalEntries: stats.totalEntries + 1 })}
-              className="p-1.5 hover:bg-white/10 rounded text-emerald-400"
+              className="p-1.5 hover:bg-white/10 rounded text-indigo-400"
               title="Add Player"
             >
               <UserPlus size={16} />
@@ -115,7 +115,7 @@ export function StatsDisplay({ stats, onUpdate }: StatsDisplayProps) {
           <Trophy size={18} />
           <span className="text-sm font-medium uppercase tracking-wider">Prize Pool</span>
         </div>
-        <div className="text-3xl font-bold text-emerald-400 tabular-nums mb-2">
+        <div className="text-3xl font-bold text-indigo-400 tabular-nums mb-2">
           ${prizePool.toLocaleString()}
         </div>
         
