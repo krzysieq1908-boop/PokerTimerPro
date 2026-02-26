@@ -63,7 +63,7 @@ export function StatsDisplay({ stats, onUpdate }: StatsDisplayProps) {
     .filter((item): item is { place: string; amount: number; percent: number } => item !== null);
 
   return (
-    <div className="w-full max-w-6xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       
       {/* Players Card */}
       <div className="bg-[#111] border border-white/10 rounded-xl p-4 flex flex-col justify-between group hover:border-indigo-500/30 transition-colors">

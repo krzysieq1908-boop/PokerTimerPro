@@ -25,8 +25,8 @@ export function TimerDisplay({ timeLeft, currentLevel, nextLevel, isFullScreen =
   const isWarning = timeLeft <= 60 && timeLeft > 0;
 
   return (
-    <div className={`flex flex-col items-center justify-center w-full mx-auto transition-all duration-500 ${isFullScreen ? 'max-w-[85vh]' : 'max-w-5xl'}`}>
-      <div className={`relative w-full aspect-square flex items-center justify-center transition-all duration-500 ${isFullScreen ? 'max-w-[85vh] max-h-[85vh]' : 'max-w-[650px] max-h-[650px]'}`}>
+    <div className={`relative flex flex-col items-center justify-center w-full mx-auto transition-all duration-500 ${isFullScreen ? 'h-full min-h-0' : 'max-w-5xl'}`}>
+      <div className={`relative aspect-square flex items-center justify-center transition-all duration-500 ${isFullScreen ? 'h-full max-h-full w-auto max-w-full' : 'w-full max-w-[650px] max-h-[650px]'}`}>
         {/* Radial Progress Background */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <svg 
@@ -66,34 +66,34 @@ export function TimerDisplay({ timeLeft, currentLevel, nextLevel, isFullScreen =
         <div className="relative z-10 flex flex-col items-center justify-center text-center w-[75%] aspect-square rounded-full bg-[#0a0a0a]/50 backdrop-blur-sm border border-white/5 shadow-2xl">
           
           {/* Level Label */}
-          <div className={`text-zinc-500 font-mono uppercase tracking-[0.3em] mb-2 sm:mb-4 transition-all duration-500 ${isFullScreen ? 'text-xl sm:text-2xl' : 'text-sm sm:text-base md:text-lg'}`}>
+          <div className={`text-zinc-500 font-mono uppercase tracking-[0.3em] mb-2 sm:mb-4 transition-all duration-500 ${isFullScreen ? 'text-[2vh] sm:text-[2.5vh]' : 'text-sm sm:text-base md:text-lg'}`}>
             {currentLevel.label}
           </div>
           
           {/* Timer */}
-          <div className={`font-mono font-bold tracking-tighter text-white tabular-nums leading-none mb-4 sm:mb-8 drop-shadow-lg transition-all duration-500 ${isFullScreen ? 'text-[12vw] sm:text-[15vh]' : 'text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem]'}`}>
+          <div className={`font-mono font-bold tracking-tighter text-white tabular-nums leading-none mb-4 sm:mb-8 drop-shadow-lg transition-all duration-500 ${isFullScreen ? 'text-[12vh] sm:text-[16vh]' : 'text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem]'}`}>
             {formatTime(minutes)}:{formatTime(seconds)}
           </div>
 
           {/* Blinds & Ante Info */}
           {currentLevel.isBreak ? (
-            <div className={`font-serif italic text-emerald-400 animate-pulse transition-all duration-500 ${isFullScreen ? 'text-6xl sm:text-8xl' : 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl'}`}>
+            <div className={`font-serif italic text-emerald-400 animate-pulse transition-all duration-500 ${isFullScreen ? 'text-[6vh] sm:text-[8vh]' : 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl'}`}>
               Break Time
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 sm:gap-5 w-full px-4">
               {/* Blinds */}
-              <div className={`flex items-baseline justify-center gap-1 sm:gap-2 font-bold text-zinc-100 whitespace-nowrap transition-all duration-500 ${isFullScreen ? 'text-5xl sm:text-7xl md:text-8xl' : 'text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl'}`}>
+              <div className={`flex items-baseline justify-center gap-1 sm:gap-2 font-bold text-zinc-100 whitespace-nowrap transition-all duration-500 ${isFullScreen ? 'text-[5vh] sm:text-[7vh]' : 'text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl'}`}>
                 <span>{currentLevel.smallBlind.toLocaleString()}</span>
-                <span className={`text-zinc-700 font-light ${isFullScreen ? 'text-4xl sm:text-6xl' : 'text-xl sm:text-3xl md:text-4xl lg:text-5xl'}`}>/</span>
+                <span className={`text-zinc-700 font-light ${isFullScreen ? 'text-[4vh] sm:text-[6vh]' : 'text-xl sm:text-3xl md:text-4xl lg:text-5xl'}`}>/</span>
                 <span>{currentLevel.bigBlind.toLocaleString()}</span>
               </div>
               
               {/* Ante */}
               {currentLevel.ante ? (
-                <div className={`flex items-center gap-2 sm:gap-3 rounded-full bg-indigo-500/10 border border-indigo-500/20 transition-all duration-500 ${isFullScreen ? 'px-8 py-3' : 'px-4 sm:px-6 py-1 sm:py-2'}`}>
-                  <span className={`text-indigo-400 font-bold tracking-wider uppercase transition-all duration-500 ${isFullScreen ? 'text-xl' : 'text-[10px] sm:text-sm md:text-base'}`}>Ante</span>
-                  <span className={`text-indigo-300 font-bold tabular-nums transition-all duration-500 ${isFullScreen ? 'text-4xl' : 'text-base sm:text-xl md:text-2xl lg:text-3xl'}`}>{currentLevel.ante.toLocaleString()}</span>
+                <div className={`flex items-center gap-2 sm:gap-3 rounded-full bg-indigo-500/10 border border-indigo-500/20 transition-all duration-500 ${isFullScreen ? 'px-6 py-2' : 'px-4 sm:px-6 py-1 sm:py-2'}`}>
+                  <span className={`text-indigo-400 font-bold tracking-wider uppercase transition-all duration-500 ${isFullScreen ? 'text-[1.5vh]' : 'text-[10px] sm:text-sm md:text-base'}`}>Ante</span>
+                  <span className={`text-indigo-300 font-bold tabular-nums transition-all duration-500 ${isFullScreen ? 'text-[3vh]' : 'text-base sm:text-xl md:text-2xl lg:text-3xl'}`}>{currentLevel.ante.toLocaleString()}</span>
                 </div>
               ) : (
                  <div className="h-8 sm:h-14"></div>
@@ -105,7 +105,7 @@ export function TimerDisplay({ timeLeft, currentLevel, nextLevel, isFullScreen =
 
       {/* Next Level Preview */}
       {nextLevel && (
-        <div className={`flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-700 transition-all duration-500 ${isFullScreen ? 'mt-16 scale-125' : 'mt-8 sm:mt-12 scale-110'}`}>
+        <div className={`flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-700 transition-all duration-500 ${isFullScreen ? 'absolute top-4 right-4 scale-75 origin-top-right sm:scale-90' : 'mt-8 sm:mt-12 scale-110'}`}>
            <div className="text-zinc-600 text-xs sm:text-sm uppercase tracking-[0.2em] mb-3">Up Next</div>
            <div className="flex items-center gap-4 px-8 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md shadow-lg">
              {nextLevel.isBreak ? (

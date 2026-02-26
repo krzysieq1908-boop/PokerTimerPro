@@ -106,18 +106,23 @@ export default function App() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col lg:flex-row pt-16 overflow-hidden lg:h-[calc(100vh-64px)]">
+      <main className={`flex-1 flex flex-col lg:flex-row overflow-hidden transition-all duration-300 ${isFullScreen ? 'h-screen pt-0' : 'pt-16 lg:h-[calc(100vh-64px)]'}`}>
         {/* Main Timer Area */}
-        <div className={`flex-1 flex flex-col p-4 sm:p-6 relative overflow-y-auto custom-scrollbar min-h-0 transition-all duration-500 ${isFullScreen ? 'justify-center' : ''}`}>
-          <div className={`w-full mx-auto flex flex-col items-center py-4 sm:py-8 transition-all duration-500 ${isFullScreen ? 'max-w-[90vw] scale-110' : 'max-w-6xl'}`}>
-            <TimerDisplay 
-              timeLeft={timeLeft} 
-              currentLevel={currentLevel} 
-              nextLevel={nextLevel} 
-              isFullScreen={isFullScreen}
-            />
+        <div className={`flex-1 flex flex-col relative min-h-0 transition-all duration-500 ${isFullScreen ? 'p-0 overflow-hidden' : 'p-4 sm:p-6 overflow-y-auto custom-scrollbar'}`}>
+          <div className={`w-full mx-auto flex flex-col items-center h-full transition-all duration-500 ${isFullScreen ? 'justify-between py-4 max-w-[95vw]' : 'py-4 sm:py-8 max-w-6xl'}`}>
             
-            <div className={`w-full flex justify-center transition-all duration-500 ${isFullScreen ? 'mt-12 opacity-0 hover:opacity-100' : 'mt-6 sm:mt-8'}`}>
+            {/* Timer - Flexible height in full screen */}
+            <div className={`flex items-center justify-center w-full transition-all duration-500 ${isFullScreen ? 'flex-1 min-h-0' : ''}`}>
+              <TimerDisplay 
+                timeLeft={timeLeft} 
+                currentLevel={currentLevel} 
+                nextLevel={nextLevel} 
+                isFullScreen={isFullScreen}
+              />
+            </div>
+            
+            {/* Controls & Stats */}
+            <div className={`w-full flex flex-col items-center transition-all duration-500 ${isFullScreen ? 'gap-4 shrink-0 px-8 pb-4' : 'gap-8 mt-6 sm:mt-8'}`}>
               <Controls 
                 isRunning={isRunning}
                 onToggle={toggleTimer}
@@ -126,13 +131,13 @@ export default function App() {
                 onPrev={prevLevel}
                 onAdjustTime={adjustTime}
               />
-            </div>
 
-            <div className={`transition-all duration-500 ${isFullScreen ? 'mt-12 scale-110' : ''}`}>
-              <StatsDisplay 
-                stats={tournamentStats} 
-                onUpdate={handleStatsUpdate} 
-              />
+              <div className={`w-full transition-all duration-500 ${isFullScreen ? 'scale-90 origin-bottom' : ''}`}>
+                <StatsDisplay 
+                  stats={tournamentStats} 
+                  onUpdate={handleStatsUpdate} 
+                />
+              </div>
             </div>
           </div>
         </div>
