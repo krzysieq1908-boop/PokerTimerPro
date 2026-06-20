@@ -1,96 +1,146 @@
-import { GoogleGenAI } from "@google/genai";
 import { BlindLevel } from "../types";
 
-// Initialize the client
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const DEFAULT_LEVEL_DURATION = 15;
+const DEFAULT_BREAK_DURATION = 5;
 
 export async function parseStructureFromFile(file: File): Promise<BlindLevel[]> {
-  const isImage = file.type.startsWith('image/');
-  const fileData = await readFile(file, isImage);
-
-  const prompt = `
-    You are a poker tournament director assistant. 
-    Extract the poker blind structure from the provided file content.
-    Return a JSON array of blind levels.
-    
-    The output must strictly follow this schema for each level:
-    {
-      "id": "string (unique)",
-      "smallBlind": number (0 if break),
-      "bigBlind": number (0 if break),
-      "ante": number (optional),
-      "duration": number (in minutes),
-      "isBreak": boolean,
-      "label": "string (e.g. 'Level 1', 'Break', 'Dinner Break')"
-    }
-
-    If the duration is not explicitly stated for a level, assume 15 minutes.
-    If it is a break, set smallBlind and bigBlind to 0 and isBreak to true.
-    If you cannot find any structure, return an empty array.
-  `;
-
-  try {
-    let contentPart: any;
-
-    if (isImage) {
-      // Remove data URL prefix for API
-      const base64Data = (fileData as string).split(',')[1];
-      contentPart = {
-        inlineData: {
-          mimeType: file.type,
-          data: base64Data
-        }
-      };
-    } else {
-      contentPart = {
-        text: fileData as string
-      };
-    }
-
-    const response = await ai.models.generateContent({
-      model: isImage ? 'gemini-2.5-flash-image' : 'gemini-2.5-flash',
-      contents: {
-        parts: [
-          contentPart,
-          { text: prompt }
-        ]
-      },
-      config: {
-        responseMimeType: "application/json",
-      }
-    });
-
-    const text = response.text;
-    if (!text) return [];
-
-    const parsed = JSON.parse(text);
-    
-    // Validate/Sanitize
-    return parsed.map((level: any, index: number) => ({
-      id: level.id || Math.random().toString(36).substr(2, 9),
-      smallBlind: Number(level.smallBlind) || 0,
-      bigBlind: Number(level.bigBlind) || 0,
-      ante: level.ante ? Number(level.ante) : undefined,
-      duration: Number(level.duration) || 15,
-      isBreak: Boolean(level.isBreak),
-      label: level.label || (level.isBreak ? 'Break' : `Level ${index + 1}`)
-    }));
-
-  } catch (error) {
-    console.error("Error parsing structure with AI:", error);
-    throw new Error("Failed to parse structure from file.");
+  if (file.type.startsWith("image/")) {
+    throw new Error("Image import is not supported without OCR or an external API.");
   }
+
+  const text = await readFileAsText(file);
+  return parseStructureText(text);
 }
 
-function readFile(file: File, isImage: boolean): Promise<string | ArrayBuffer | null> {
+function parseStructureText(text: string): BlindLevel[] {
+  const normalizedText = text
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\r/g, "\n");
+
+  const lines = normalizedText
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const levels = lines
+    .map((line, index) => parseLine(line, index))
+    .filter((level): level is BlindLevel => level !== null);
+
+  return levels.map((level, index) => ({
+    ...level,
+    id: level.id || randomId(),
+    label: level.label || (level.isBreak ? "Break" : `Level ${index + 1}`),
+  }));
+}
+
+function parseLine(line: string, index: number): BlindLevel | null {
+  const duration = extractDuration(line);
+  const isBreak = /\bbreak\b/i.test(line);
+
+  if (isBreak) {
+    return {
+      id: `break-${index}`,
+      smallBlind: 0,
+      bigBlind: 0,
+      duration: duration ?? DEFAULT_BREAK_DURATION,
+      isBreak: true,
+      label: extractBreakLabel(line),
+    };
+  }
+
+  const slashMatch = line.match(
+    /(\d[\d\s,.]*)\s*[\/\\-]\s*(\d[\d\s,.]*)(?:\s*[\/\\-]\s*(\d[\d\s,.]*))?/,
+  );
+
+  if (slashMatch) {
+    const smallBlind = toNumber(slashMatch[1]);
+    const bigBlind = toNumber(slashMatch[2]);
+    const ante = slashMatch[3] ? toNumber(slashMatch[3]) : undefined;
+
+    if (smallBlind > 0 && bigBlind > 0) {
+      return {
+        id: `level-${index}`,
+        smallBlind,
+        bigBlind,
+        ante: ante && ante > 0 ? ante : undefined,
+        duration: duration ?? DEFAULT_LEVEL_DURATION,
+        isBreak: false,
+        label: extractLevelLabel(line),
+      };
+    }
+  }
+
+  const separatedValues = line
+    .split(/[\t,;|]+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  const numericValues = separatedValues
+    .map((part) => toNumber(part))
+    .filter((value) => value > 0);
+
+  if (numericValues.length >= 2) {
+    return {
+      id: `level-${index}`,
+      smallBlind: numericValues[0],
+      bigBlind: numericValues[1],
+      ante: numericValues[2] && numericValues[2] !== duration ? numericValues[2] : undefined,
+      duration: duration ?? extractDurationFromColumns(separatedValues) ?? DEFAULT_LEVEL_DURATION,
+      isBreak: false,
+      label: extractLevelLabel(line),
+    };
+  }
+
+  return null;
+}
+
+function extractDuration(line: string): number | undefined {
+  const minuteMatch = line.match(/(\d+)\s*(?:m|min|mins|minute|minutes)\b/i);
+
+  if (minuteMatch) {
+    return Number(minuteMatch[1]);
+  }
+
+  return undefined;
+}
+
+function extractDurationFromColumns(parts: string[]): number | undefined {
+  for (const part of parts) {
+    if (/\b(?:m|min|mins|minute|minutes)\b/i.test(part)) {
+      const parsed = toNumber(part);
+      if (parsed > 0) {
+        return parsed;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+function extractBreakLabel(line: string): string {
+  const cleaned = line.replace(/\s+/g, " ").trim();
+  return cleaned || "Break";
+}
+
+function extractLevelLabel(line: string): string | undefined {
+  const match = line.match(/\b(level\s*\d+)\b/i);
+  return match ? match[1].replace(/\s+/g, " ") : undefined;
+}
+
+function toNumber(value: string): number {
+  const normalized = value.replace(/[^\d]/g, "");
+  return normalized ? Number(normalized) : 0;
+}
+
+function readFileAsText(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    if (isImage) {
-      reader.readAsDataURL(file);
-    } else {
-      reader.readAsText(file);
-    }
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(reader.error || new Error("Failed to read file."));
+    reader.readAsText(file);
   });
+}
+
+function randomId(): string {
+  return Math.random().toString(36).slice(2, 11);
 }

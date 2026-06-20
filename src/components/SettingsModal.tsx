@@ -443,7 +443,7 @@ export function SettingsModal({ isOpen, onClose, levels: initialLevels, onSave, 
                     ref={fileInputRef} 
                     className="hidden" 
                     onChange={handleFileChange}
-                    accept="image/*,.txt,.xml,.json,.csv"
+                    accept=".txt,.xml,.json,.csv"
                   />
                   <button 
                     onClick={handleImportClick}
